@@ -144,4 +144,6 @@ LOGOUT_REDIRECT_URL = '/login/'
 import os
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['planlikeleo-production.up.railway.app']
+
+CSRF_TRUSTED_ORIGINS = ['https://planlikeleo-production.up.railway.app']
