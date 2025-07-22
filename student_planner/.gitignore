@@ -1,0 +1,27 @@
+# fichiers Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# fichiers Django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+
+# environnements virtuels
+env/
+venv/
+.venv/
+
+# fichiers secrets
+.env
+
+# fichiers système
+*.DS_Store
+*.swp
+
+# fichiers de déploiement
+staticfiles/
