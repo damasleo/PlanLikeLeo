@@ -1,0 +1,140 @@
+{% extends 'planner/base.html' %}
+{% load static %}
+{% load planner_extras %}
+
+{% block title %}Schedule - PlanLikeLeo{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold" style="color:#764ba2;"><i class="fas fa-calendar-alt me-2"></i> Weekly Schedule</h2>
+    <button class="btn btn-primary fw-bold" style="background:#fff;color:#764ba2;border:1.5px solid #764ba2;" data-bs-toggle="modal" data-bs-target="#addScheduleModal">
+        <i class="fas fa-plus"></i> Add Class
+    </button>
+</div>
+
+<div class="card shadow-sm mb-4" style="border-radius:2rem;background:#fff;">
+    <div class="card-header d-flex align-items-center" style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border-top-left-radius:2rem;border-top-right-radius:2rem;">
+        <h5 class="mb-0 text-white"><i class="fas fa-calendar-week me-2"></i> Your Weekly Timetable</h5>
+    </div>
+    <div class="card-body p-4">
+        <div class="row g-4">
+            {% for day in days %}
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="p-3 h-100" style="background:#f7f6fd;border-radius:1.5rem;min-height:220px;box-shadow:0 2px 8px rgba(118,75,162,0.04);">
+                        <h6 class="fw-bold mb-3" style="color:#764ba2;letter-spacing:1px;text-transform:capitalize;">
+                            <i class="far fa-calendar-alt me-1"></i> {{ day|title }}
+                        </h6>
+                        {% if schedule_by_day|get_item:day %}
+                            {% for item in schedule_by_day|get_item:day %}
+                                <div class="mb-3 schedule-item-card p-3 d-flex justify-content-between align-items-start" style="background:#fff;border-radius:1rem;box-shadow:0 1px 4px rgba(118,75,162,0.06);border-left:4px solid #764ba2;transition:box-shadow .2s;">
+                                    <div>
+                                        <div class="fw-bold" style="color:#667eea;font-size:1.1rem;">{{ item.subject }}</div>
+                                        <div class="small text-muted mb-1">
+                                            <i class="far fa-clock me-1"></i>{{ item.start_time|time:"g:i A" }} - {{ item.end_time|time:"g:i A" }}
+                                        </div>
+                                        {% if item.room %}
+                                            <div class="small text-secondary"><i class="fas fa-door-open me-1"></i>Room: {{ item.room }}</div>
+                                        {% endif %}
+                                        {% if item.instructor %}
+                                            <div class="small text-secondary"><i class="fas fa-user-tie me-1"></i>Instructor: {{ item.instructor }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <a href="{% url 'schedule_item_delete' item.id %}" class="btn btn-sm p-2 ms-2" style="background:#f7f6fd;border-radius:50%;color:#ff2222;" title="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-center text-muted small">No classes scheduled</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Add Schedule Modal -->
+<div class="modal fade" id="addScheduleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-plus"></i> Add New Class
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="{{ form.subject.id_for_label }}" class="form-label">Subject *</label>
+                        {{ form.subject }}
+                        {% if form.subject.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.subject.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.day_of_week.id_for_label }}" class="form-label">Day *</label>
+                            {{ form.day_of_week }}
+                            {% if form.day_of_week.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.day_of_week.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.room.id_for_label }}" class="form-label">Room</label>
+                            {{ form.room }}
+                            {% if form.room.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.room.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.start_time.id_for_label }}" class="form-label">Start Time *</label>
+                            {{ form.start_time }}
+                            {% if form.start_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.start_time.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.end_time.id_for_label }}" class="form-label">End Time *</label>
+                            {{ form.end_time }}
+                            {% if form.end_time.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.end_time.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.instructor.id_for_label }}" class="form-label">Instructor</label>
+                        {{ form.instructor }}
+                        {% if form.instructor.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.instructor.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Add Class
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

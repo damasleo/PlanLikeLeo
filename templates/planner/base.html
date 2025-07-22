@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PlanLikeLeo{% endblock %}</title>
+    {% load static %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/web/favicon.ico' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/web/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/web/icon-192.png' %}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/web/icon-512.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/web/icon-192-maskable.png' %}"/>
+    <link rel="icon" type="image/png" sizes="512x512" href="{% static 'images/web/icon-512-maskable.png' %}"/>
+    <style>
+        body {
+            min-height: 100vh;
+        }
+        .custom-sidebar {
+            min-height: 100vh;
+            background: #fff;
+            color: #6c757d;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 270px;
+            z-index: 1030;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #f0f0f0;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 1.5rem 0 2.5rem 0;
+            justify-content: center;
+        }
+        .sidebar-logo img {
+            height: 85px;
+        }
+        .mobile-logo {
+            height: 56px !important;
+            transition: height 0.3s;
+        }
+    
+        .custom-sidebar .nav-link {
+            color: #8b8b99;
+            font-size: 1.25rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .custom-sidebar .nav-link.active {
+            background: #cfe2ff;
+            color: #764ba2;
+            font-weight: bold;
+        }
+        .custom-sidebar .nav-link.active i {
+            color: #764ba2;
+        }
+        .custom-sidebar .nav-link i {
+            font-size: 1.5rem;
+            color: #b0b0b0;
+            transition: color 0.2s;
+        }
+        .custom-sidebar .nav-link:hover {
+            background: #f0f4fa;
+            color: #764ba2;
+        }
+        .custom-sidebar .nav-link:hover i {
+            color: #764ba2;
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding-bottom: 2rem;
+            text-align: center;
+        }
+        .main-content {
+            margin-left: 260px;
+            padding: 2rem 1rem 1rem 1rem;
+        }
+        @media (max-width: 991.98px) {
+            .custom-sidebar {
+                left: -260px;
+                opacity: 0;
+                transition: left 0.4s cubic-bezier(.4,0,.2,1), opacity 0.3s;
+            }
+            .custom-sidebar.show {
+                left: 0;
+                opacity: 1;
+                box-shadow: 2px 0 16px rgba(0,0,0,0.08);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated and request.resolver_match.url_name != 'welcome' and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}
+    <!-- Sidebar -->
+    <nav class="custom-sidebar d-lg-flex flex-column p-0 d-none">
+        <div class="sidebar-logo">
+            <img src="{% static 'images/planlikeleo/plan.png' %}" alt="Logo" />
+        </div>
+        <ul class="nav nav-pills flex-column mb-auto px-3">
+            <li class="nav-item">
+                <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'task_list' %}" class="nav-link {% if request.resolver_match.url_name == 'task_list' %}active{% endif %}">
+                    <i class="fas fa-tasks"></i> Tasks
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'schedule' %}" class="nav-link {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}">
+                    <i class="fas fa-calendar-alt"></i> Schedule
+                </a>
+            </li>
+            <li>
+                <a href="{% url 'notes' %}" class="nav-link {% if request.resolver_match.url_name == 'notes' %}active{% endif %}">
+                    <i class="fas fa-sticky-note"></i> Notes
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-secondary text-decoration-none dropdown-toggle justify-content-center" id="sidebarUserDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle fa-lg me-2"></i>
+                    <span>{{ user.username }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark shadow" aria-labelledby="sidebarUserDropdown">
+                    <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Sidebar Toggle Button (mobile) -->
+    <nav class="navbar navbar-light bg-white border-bottom d-lg-none">
+        <div class="container-fluid d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <button class="navbar-toggler me-2" type="button" id="sidebarToggle">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand p-0 m-0" href="{% url 'dashboard' %}">
+                    <img src="{% static 'images/planlikeleo/plan.png' %}" alt="Logo" class="mobile-logo" />
+                </a>
+            </div>
+            <a href="{% url 'profile' %}" class="text-decoration-none text-secondary">
+                <i class="fas fa-user-circle fa-2x"></i>
+            </a>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="{% if user.is_authenticated and request.resolver_match.url_name != 'welcome' and request.resolver_match.url_name != 'login' and request.resolver_match.url_name != 'register' %}main-content{% endif %}">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+    // Sidebar toggle for mobile
+    // Affiche la sidebar sur mobile quand on clique sur le bouton burger
+    // et la cache si on reclique
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.custom-sidebar');
+        const toggleBtn = document.getElementById('sidebarToggle');
+        if (sidebar && toggleBtn) {
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('show');
+                sidebar.classList.remove('d-none'); // S'assurer qu'elle est visible
+            });
+        }
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

@@ -1,0 +1,158 @@
+{% extends 'planner/base.html' %}
+{% load static %}
+
+{% block title %}Notes - PlanLikeLeo{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-sticky-note"></i> Personal Notes</h2>
+    <a href="{% url 'note_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add New Note
+    </a>
+</div>
+
+{% if notes %}
+    <div class="row">
+        {% for note in notes %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card note-card h-100" tabindex="0"
+                     style="background:{{ note.color }};border-radius:1.2rem;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.06);"
+                     data-bs-toggle="popover" data-bs-trigger="manual" data-bs-html="true"
+                     title="<b>{{ note.title|escape }}</b>"
+                     data-bs-content="<button type='button' class='btn btn-sm btn-outline-secondary float-end mb-2 close-popover' style='font-size:1.1em;'>Close</button>
+<div style='white-space:pre-line;'>{{ note.content|linebreaksbr|escape }}</div><hr class='my-2'><small class='text-muted'>Updated: {{ note.updated_at|date:'M j, g:i a' }}</small>">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title mb-0 text-truncate">{{ note.title }}</h5>
+                            <div class="btn-group" role="group">
+                                <a href="{% url 'note_edit' note.id %}" class="btn btn-sm btn-outline-light" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'note_delete' note.id %}" class="btn btn-sm btn-outline-light" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <p class="card-text text-truncate">{{ note.content|truncatewords:30 }}</p>
+                        <div class="mt-auto">
+                            <small class="opacity-75">
+                                <i class="fas fa-clock"></i> {{ note.updated_at|date:"M j, Y g:i A" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="fas fa-sticky-note fa-3x text-muted mb-3"></i>
+            <h4 class="text-muted">No notes yet</h4>
+            <p class="text-muted">Start taking notes to keep track of your thoughts and ideas!</p>
+            <a href="{% url 'note_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Create Your First Note
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<style>
+.popover {
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px rgba(118,75,162,0.15), 0 1.5px 6px rgba(0,0,0,0.08);
+    background: #fff;
+    min-width: 260px;
+    max-width: 350px;
+    padding: 0.5rem 0.8rem 0.8rem 0.8rem;
+}
+.popover-header {
+    background: none;
+    border-bottom: none;
+    color: #764ba2;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding-bottom: 0;
+}
+.popover-body {
+    color: #222;
+    font-size: 1rem;
+    padding-top: 0.2rem;
+}
+.popover hr {
+    margin: 0.5rem 0;
+    border-top: 1px solid #eee;
+}
+@media (max-width: 600px) {
+    .popover {
+        min-width: 90vw;
+        max-width: 95vw;
+        font-size: 1.1rem;
+        padding: 1rem 1rem 1.2rem 1rem;
+    }
+    .popover-header {
+        font-size: 1.2rem;
+    }
+    .popover-body {
+        font-size: 1.05rem;
+    }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('.note-card[tabindex]'));
+    var popoverInstances = popoverTriggerList.map(function (el) {
+        return new bootstrap.Popover(el, {
+            container: 'body',
+            placement: 'auto',
+            html: true,
+            sanitize: false,
+            trigger: 'manual'
+        });
+    });
+    // Gestion du tap/click pour ouvrir/fermer le popover
+    popoverTriggerList.forEach(function(el, idx) {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            // Fermer tous les autres popovers
+            popoverTriggerList.forEach(function(otherEl, otherIdx) {
+                if (otherIdx !== idx) {
+                    bootstrap.Popover.getInstance(otherEl).hide();
+                }
+            });
+            var pop = bootstrap.Popover.getInstance(el);
+            if (el.classList.contains('popover-open')) {
+                pop.hide();
+                el.classList.remove('popover-open');
+            } else {
+                pop.show();
+                el.classList.add('popover-open');
+            }
+        });
+    });
+    // Fermer le popover avec le bouton Close
+    document.addEventListener('shown.bs.popover', function (event) {
+        var popover = event.target;
+        setTimeout(function() {
+            var closeBtn = document.querySelector('.popover .close-popover');
+            if (closeBtn) {
+                closeBtn.onclick = function() {
+                    bootstrap.Popover.getInstance(popover).hide();
+                    popover.classList.remove('popover-open');
+                };
+            }
+        }, 100);
+    });
+    // Fermer le popover si on clique ailleurs
+    document.addEventListener('click', function(e) {
+        popoverTriggerList.forEach(function(el) {
+            bootstrap.Popover.getInstance(el).hide();
+            el.classList.remove('popover-open');
+        });
+    });
+});
+</script>
+{% endblock %} 

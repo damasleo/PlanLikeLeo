@@ -1,0 +1,406 @@
+{% extends 'planner/base.html' %}
+{% load static %}
+
+{% block title %}Welcome - PlanLikeLeo{% endblock %}
+
+{% block content %}
+<!-- Navbar spécifique à la page welcome -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2 mb-0" style="border-radius: 0 0 1rem 1rem;">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center gap-4 fw-bold fs-4" href="/">
+            <img src="{% static 'images/planlikeleo/Design (2).png' %}" alt="Logo" style="height:48px;">
+            <span style="color:#764ba2;">PlanLikeLeo</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#welcomeNavbar" aria-controls="welcomeNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="welcomeNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-3">
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold" href="#about">About</a>
+                </li>
+            </ul>
+            <a href="{% url 'login' %}" class="btn btn-primary ms-lg-4 fw-bold px-4" style="background:#764ba2;border:none;">
+                <i class="fas fa-sign-in-alt me-1"></i> Sign In
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="welcome-hero">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="welcome-content">
+                    <h1 class="display-4 fw-bold text-primary mb-4">
+                        <i class="fas fa-graduation-cap me-3"></i>
+                        PlanLikeLeo
+                    </h1>
+                    <p class="lead mb-4">
+                        Your all-in-one solution for managing your student life. Stay organized, 
+                        track your progress, and achieve your goals with ease.
+                    </p>
+                    <div class="feature-list mb-5">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="fas fa-tasks text-success me-2"></i>
+                                    <span>Task Management</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-calendar-alt text-info me-2"></i>
+                                    <span>Weekly Schedule</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-item">
+                                    <i class="fas fa-sticky-note text-warning me-2"></i>
+                                    <span>Personal Notes</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-chart-line text-danger me-2"></i>
+                                    <span>Progress Tracking</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="welcome-buttons">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                Go to Dashboard
+                            </a>
+                        {% else %}
+                            <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-3">
+                                <i class="fas fa-user-plus me-2"></i>
+                                Get Started
+                            </a>
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>
+                                Sign In
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="welcome-illustration text-center">
+                    <div class="illustration-container">
+                        <div class="floating-card card-1">
+                            <i class="fas fa-tasks"></i>
+                            <span>Tasks</span>
+                        </div>
+                        <div class="floating-card card-2">
+                            <i class="fas fa-calendar"></i>
+                            <span>Schedule</span>
+                        </div>
+                        <div class="floating-card card-3">
+                            <i class="fas fa-sticky-note"></i>
+                            <span>Notes</span>
+                        </div>
+                        <div class="main-illustration">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3" style="color:#764ba2;">Features</h2>
+                <p class="lead text-muted">Everything you need to organize your student life</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100 bg-white rounded-4 shadow-sm">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-calendar-check fa-3x" style="color:#667eea;"></i>
+                    </div>
+                    <h4 class="fw-bold">Smart Task Management</h4>
+                    <p class="text-muted">Easily add, organize, and track your tasks and deadlines. Never miss an assignment again!</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100 bg-white rounded-4 shadow-sm">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-calendar-alt fa-3x" style="color:#764ba2;"></i>
+                    </div>
+                    <h4 class="fw-bold">Weekly Schedule</h4>
+                    <p class="text-muted">Visualize your week, plan your classes, and manage your time with a beautiful calendar view.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100 bg-white rounded-4 shadow-sm">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-sticky-note fa-3x" style="color:#ffb347;"></i>
+                    </div>
+                    <h4 class="fw-bold">Personal Notes</h4>
+                    <p class="text-muted">Take notes, save ideas, and keep everything organized in one place, accessible anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h2 class="fw-bold mb-3" style="color:#764ba2;">About PlanLikeLeo</h2>
+                <p class="lead text-muted mb-4">
+                    PlanLikeLeo is your all-in-one digital planner designed for students who want to take control of their academic journey. Our mission is to empower you to achieve your goals, reduce stress, and enjoy a more organized, productive, and fulfilling student life.
+                </p>
+                <p class="text-muted">
+                    Whether you’re tracking assignments, planning your week, or jotting down ideas, PlanLikeLeo is here to help you stay on top of everything. Built by students, for students.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section id="why-choose" class="py-5 bg-white">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3" style="color:#764ba2;">Why Choose Us?</h2>
+                <p class="lead text-muted">PlanLikeLeo is built for students who want more than just a planner.</p>
+            </div>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4 h-100 bg-light rounded-4 shadow-sm border-0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-bolt fa-2x" style="color:#ffd54f;"></i>
+                    </div>
+                    <h5 class="fw-bold">Fast & Intuitive</h5>
+                    <p class="text-muted">A clean, modern interface that makes planning effortless and enjoyable.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4 h-100 bg-light rounded-4 shadow-sm border-0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-2x" style="color:#06c944;"></i>
+                    </div>
+                    <h5 class="fw-bold">Secure & Private</h5>
+                    <p class="text-muted">Your data is safe and only accessible by you. Privacy is our priority.</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4 h-100 bg-light rounded-4 shadow-sm border-0">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-sync-alt fa-2x" style="color:#667eea;"></i>
+                    </div>
+                    <h5 class="fw-bold">Sync Across Devices</h5>
+                    <p class="text-muted">Access your planner from any device, anytime, anywhere.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Media Icons -->
+<div class="container text-center my-5">
+    <div class="mb-4">
+        <a href="#" class="mx-2 text-secondary fs-3"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="mx-2 text-secondary fs-3"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="mx-2 text-secondary fs-3"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="mx-2 text-secondary fs-3"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="mx-2 text-secondary fs-3"><i class="fab fa-linkedin"></i></a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-white border-top py-4 mt-5">
+    <div class="container text-center">
+        <div class="mb-2">
+            <img src="{% static 'images/planlikeleo/Design (2).png' %}" alt="Logo" style="height:32px;vertical-align:middle;">
+            <span class="fw-bold ms-2" style="color:#764ba2;">PlanLikeLeo</span>
+        </div>
+        <div class="text-muted small">&copy; {{ now|date:'Y' }} PlanLikeLeo. All rights reserved.</div>
+    </div>
+</footer>
+
+<style>
+.welcome-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+}
+
+.welcome-content {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-item {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.welcome-buttons .btn {
+    padding: 12px 30px;
+    font-weight: 600;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.welcome-buttons .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.illustration-container {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-illustration {
+    font-size: 8rem;
+    color: rgba(255,255,255,0.9);
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-card {
+    position: absolute;
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    animation: float 4s ease-in-out infinite;
+}
+
+.floating-card i {
+    font-size: 1.5rem;
+}
+
+.card-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.card-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.card-3 {
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.feature-card {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+.feature-icon {
+    color: #667eea;
+}
+
+a.text-secondary:hover i.fab.fa-facebook {
+    color: #1877F2; /* Bleu Facebook */
+    transform: translateY(-5px);
+}
+
+a.text-secondary:hover i.fab.fa-twitter {
+    color: #1DA1F2; /* Bleu Twitter */
+    transform: translateY(-5px);
+}
+
+a.text-secondary:hover i.fab.fa-instagram {
+    color: #E1306C; /* Dégradé simplifié d’Instagram */
+    transform: translateY(-5px);
+}
+
+a.text-secondary:hover i.fab.fa-tiktok {
+    color: #000000; /* Noir TikTok (peut varier selon style) */
+    transform: translateY(-5px);
+}
+
+a.text-secondary:hover i.fab.fa-linkedin {
+    color: #0077B5; /* Bleu LinkedIn */
+    transform: translateY(-5px);
+}
+
+/* Animation fluide */
+a.text-secondary i.fab {
+    transition: all 0.3s ease;
+}
+
+
+@media (max-width: 768px) {
+    .welcome-hero {
+        text-align: center;
+    }
+    
+    .illustration-container {
+        height: 300px;
+        margin-top: 2rem;
+    }
+    
+    .main-illustration {
+        font-size: 6rem;
+    }
+    
+    .floating-card {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .floating-card i {
+        font-size: 1.2rem;
+    }
+}
+</style>
+{% endblock %} 

@@ -1,0 +1,319 @@
+{% extends 'planner/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PlanLikeLeo{% endblock %}
+
+{% block content %}
+<!-- Welcome + Time/Avatar Section -->
+<div class="welcome-section mb-4 p-0" ">
+    <div class="rounded-4 p-4 mb-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between">
+            <div>
+                <h2 class="fw-bold text-white mb-2" id="greeting-text">Good Day, {{ user.first_name }}.</h2>
+                <div class="text-white-50 fs-5">You have {{ today_tasks.count }} tasks due today.</div>
+            </div>
+            <div class="d-flex align-items-center mt-4 mt-md-0">
+                <div class="me-4 text-end">
+                    <div class="display-5 fw-bold" id="current-time">--:-- --</div>
+                    <div class="text-white-50 fs-6" id="current-date">-- --, ----</div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Welcome Section -->
+
+<!-- Stats Section -->
+<div class="stats-section mb-4" style="background:#fff;border-radius:48px;padding:2rem 1rem;box-shadow:0 2px 8px rgba(0,0,0,0.03);">
+    <div class="d-flex flex-column flex-md-row justify-content-around align-items-center gap-4">
+        <!-- Overdue Tasks -->
+        <div class="text-center">
+            <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;border:4px solid #764ba2;">
+                <i class="far fa-clock" style="font-size:2.5rem;color: #764ba2;"></i>
+            </div>
+            <div class="mt-2" style="font-size:2.5rem;font-weight:600;color:#ff2222;">{{ overdue_tasks }}</div>
+            <div class="fw-bold mt-1" style="letter-spacing:1px;">OVERDUE TASKS</div>
+        </div>
+        <!-- Tasks Completed -->
+        <div class="text-center">
+            <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;border:4px solid #764ba2;">
+                <i class="fas fa-check" style="font-size:2.5rem;color: #764ba2;"></i>
+            </div>
+            <div class="mt-2" style="font-size:2.5rem;font-weight:600;color: #06c944;">{{ completed_tasks }}</div>
+            <div class="fw-bold mt-1" style="letter-spacing:1px;">TASKS COMPLETED</div>
+        </div>
+        <!-- Pending Tasks -->
+        <div class="text-center">
+            <div style="display:inline-flex;align-items:center;justify-content:center;width:80px;height:80px;border-radius:50%;border:4px solid #ccc;">
+                <i class="far fa-circle" style="font-size:2.5rem;color:#ccc;"></i>
+            </div>
+            <div class="mt-2" style="font-size:2.5rem;font-weight:600;color: #764ba2;">
+                {{ pending_tasks_7days }}<span style="color:#e9b7f0;font-size:2.2rem;"> / {{ total_tasks_7days }}</span>
+            </div>
+            <div class="fw-bold mt-1" style="letter-spacing:1px;">PENDING TASKS</div>
+            <div class="text-muted small">Next 7 days</div>
+        </div>
+    </div>
+</div>
+<!-- End Stats Section -->
+
+<div class="row">
+    <!-- Today's Tasks -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) ; border-top-left-radius: .5rem; border-top-right-radius: .5rem;">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-calendar-day"></i> Today's Tasks
+                    <small class="text-white-50">({{ today|date:"F j, Y" }})</small>
+                </h5>
+                <a href="{% url 'task_create' %}" class="btn btn-primary btn-sm fw-bold" style="background:#fff; color:#764ba2; border:1.5px solid #764ba2;">
+                    <i class="fas fa-plus"></i> Add Task
+                </a>
+            </div>
+            <div class="card-body" style="max-height: 260px; overflow-y: auto;">
+                {% if today_tasks %}
+                    {% for task in today_tasks|slice:":2" %}
+                        <div class="task-card {{ task.status|slugify }} mb-3 p-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ task.title }}</h6>
+                                    {% if task.description %}
+                                        <p class="text-muted small mb-1">{{ task.description|truncatewords:20 }}</p>
+                                    {% endif %}
+                                    <span class="badge bg-secondary">{{ task.get_category_display }}</span>
+                                </div>
+                                <div class="text-end">
+                                    <select class="form-select form-select-sm task-status-select" data-task-id="{{ task.id }}">
+                                        <option value="todo" {% if task.status == 'todo' %}selected{% endif %}>To Do</option>
+                                        <option value="in_progress" {% if task.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                                        <option value="done" {% if task.status == 'done' %}selected{% endif %}>Done</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {% if today_tasks|length > 2 %}
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i><br>
+                        No tasks for today! Great job!
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- This Week's Overview -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-week"></i> This Week's Overview
+                </h5>
+                <a href="{% url 'task_list' %}" class="btn btn-primary btn-sm fw-bold" style="background:#fff; color:#764ba2; border:1.5px solid #764ba2;">
+                    <i class="fas fa-list"></i> View All Tasks
+                </a>
+            </div>
+            <div class="card-body" style="max-height: 320px; overflow-y: auto;">
+                {% if week_tasks %}
+                    <div class="week-overview">
+                        {% for task in week_tasks %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div>
+                                    <strong>{{ task.title }}</strong>
+                                    <br>
+                                    <small class="text-muted">{{ task.due_date|date:"M j" }} - {{ task.get_category_display }}</small>
+                                </div>
+                                <span class="badge {% if task.status == 'done' %}bg-success{% elif task.status == 'in_progress' %}bg-info{% else %}bg-warning{% endif %}">
+                                    {{ task.get_status_display }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                        {% if week_tasks|length > 4 %}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-calendar fa-2x mb-2"></i><br>
+                        No tasks scheduled for this week
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Upcoming Tasks -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock"></i> Upcoming Tasks
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if upcoming_tasks %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Task</th>
+                                    <th>Category</th>
+                                    <th>Due Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for task in upcoming_tasks %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ task.title }}</strong>
+                                            {% if task.description %}
+                                                <br><small class="text-muted">{{ task.description|truncatewords:10 }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td><span class="badge bg-secondary">{{ task.get_category_display }}</span></td>
+                                        <td>{{ task.due_date|date:"M j, Y" }}</td>
+                                        <td>
+                                            <span class="badge {% if task.status == 'done' %}bg-success{% elif task.status == 'in_progress' %}bg-info{% else %}bg-warning{% endif %}">
+                                                {{ task.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'task_edit' task.id %}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-calendar-check fa-2x mb-2"></i><br>
+                        No upcoming tasks beyond this week
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Notes -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-sticky-note"></i> Recent Notes
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if recent_notes %}
+                    <div class="note-card mb-3 p-3">
+                        <h6 class="mb-1">{{ recent_notes.0.title }}</h6>
+                        <p class="small mb-2">{{ recent_notes.0.content|truncatewords:15 }}</p>
+                        <small class="opacity-75">{{ recent_notes.0.updated_at|date:"M j, g:i a" }}</small>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">
+                        <i class="fas fa-edit fa-2x mb-2"></i><br>
+                        No notes yet
+                    </p>
+                {% endif %}
+                <div class="text-center">
+                    <a href="{% url 'note_create' %}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Add Note
+                    </a>
+                    <a href="{% url 'notes' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list"></i> View All
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-bolt"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'task_create' %}" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> New Task
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'schedule' %}" class="btn btn-success w-100">
+                            <i class="fas fa-calendar-alt"></i> View Schedule
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'note_create' %}" class="btn btn-info w-100">
+                            <i class="fas fa-edit"></i> New Note
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{% url 'profile' %}" class="btn btn-secondary w-100">
+                            <i class="fas fa-user"></i> Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<footer class="bg-white border-top py-4 mt-5">
+    <div class="container text-center">
+        <div class="mb-2">
+            <img src="{% static 'images/planlikeleo/Design (2).png' %}" alt="Logo" style="height:32px;vertical-align:middle;">
+            <span class="fw-bold ms-2" style="color:#764ba2;">PlanLikeLeo</span>
+        </div>
+        <div class="text-muted small">&copy; {{ now|date:'Y' }} PlanLikeLeo. All rights reserved.</div>
+    </div>
+</footer>
+
+{% block extra_js %}
+<script>
+function getGreeting() {
+    const now = new Date();
+    const hour = now.getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+}
+function updateTimeAndGreeting() {
+    const now = new Date();
+    // Format time
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 => 12
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    const timeStr = hours + ':' + minutes + ' ' + ampm;
+    // Format date
+    const dateStr = now.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    // Set
+    document.getElementById('current-time').textContent = timeStr;
+    document.getElementById('current-date').textContent = dateStr;
+    // Greeting
+    document.getElementById('greeting-text').textContent = getGreeting() + ', {{ user.first_name }}.';
+}
+document.addEventListener('DOMContentLoaded', function() {
+    updateTimeAndGreeting();
+    setInterval(updateTimeAndGreeting, 1000);
+});
+</script>
+{% endblock %} 
